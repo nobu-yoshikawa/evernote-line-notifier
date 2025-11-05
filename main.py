@@ -57,7 +57,7 @@ def send_broadcast(text: str):
     フォロワーが自分だけなら実質“個人宛”。
     5件/リクエストの制約に合わせて分割送信。
     """
-    token = os.environ["sb5M1uCBcXkrmCw97TCCeO1M4psJveviPp0j+shKeVOxf1TweXIOYPnIi6l1VQd6cSsYk17eoBlO60+faMODi2pTST9xFCey9V4izENNMaoYADsSlGrHaxPui/PunfsYbeDmLFdcNESwbyfhz69T+gdB04t89/1O/w1cDnyilFU="]  # ← Secrets: Messaging APIのチャネルアクセストークン
+token = os.environ["LINE_CHANNEL_TOKEN"]  # GitHub Secrets のキー名と一致
     url = "https://api.line.me/v2/bot/message/broadcast"
     headers = {
         "Authorization": f"Bearer {token}",
