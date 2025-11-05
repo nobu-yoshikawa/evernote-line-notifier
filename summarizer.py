@@ -1,36 +1,23 @@
-import os
+# summarizer.py（抜粋）
+SYSTEM_PROMPT = """あなたは「日記から学びを抽出し、今日に活かす提案」を作る専門編集者です。
+出力は日本語。読者は未来の自分（ビジネスマン/父親）。"""
 
-def summarize(text: str, max_chars: int = 600) -> str:
-    """
-    過去の日記を“単なる要約”ではなく、
-    その日の朝に読み返すのに適した『学び・気づきの再定着型サマリー』として生成します。
-    """
-    api_key = os.getenv("GEMINI_API_KEY")
-    if not api_key or not text:
-        return text[:max_chars]
+USER_PROMPT = """以下はの日記本文です。
+目的は「当日の朝に読み、行動を1つ変えること」。要約よりも“活かし方”を優先してください。
 
-    try:
-        import google.generativeai as genai
-        genai.configure(api_key=api_key)
-        model = genai.GenerativeModel("gemini-1.5-flash")
+出力フォーマット（Markdown、最大{max_chars}文字）:
+# 一言まとめ（15字以内）
+- 例：「○○は“先に枠”を決める」
 
-        prompt = f"""
-あなたは内省コーチです。以下は過去の日記です。
-この内容から「今日に活かせる学び・気づき・行動のヒント」を抽出し、
-朝に自分自身へ送る“振り返りメッセージ”として日本語でまとめてください。
+## 気づき（3行以内）
+- 事実/感情/原因の整理
 
-条件：
-- 単なる要約ではなく、日記のエッセンスから「行動・考え方・気づき」に焦点を当てる
-- 朝読むのに前向きになれるように、穏やかで希望のある語り口にする
-- 最大500文字、見出し＋3つ以内の箇条書きで簡潔に
-- 書き手は過去の自分、読み手は今日の自分という前提
+## 今日に活かす一手（必ず1つ）
+- 朝イチにやる具体行動（30字以内）
+
+## 再定着（1分レビュー）
+- 夜に振り返る観点を1行
 
 【日記本文】
-{text}
+{content}
 """
-
-        resp = model.generate_content(prompt)
-        return resp.text.strip()[:max_chars]
-
-    except Exception as e:
-        return text[:max_chars]
