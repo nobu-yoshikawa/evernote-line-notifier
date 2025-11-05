@@ -1,18 +1,19 @@
+import os
 import requests
+import datetime
 
-# ↓↓↓ ここを実際のチャネルアクセストークンに置き換え（英数字のみ／前後に空白や改行を含めない）
-LINE_CHANNEL_TOKEN = "sb5M1uCBcXkrmCw97TCCeO1M4psJveviPp0j+shKeVOxf1TweXIOYPnIi6l1VQd6cSsYk17eoBlO60+faMODi2pTST9xFCey9V4izENNMaoYADsSlGrHaxPui/PunfsYbeDmLFdcNESwbyfhz69T+gdB04t89/1O/w1cDnyilFU="
+TOKEN = os.environ["LINE_CHANNEL_TOKEN"]  # ← GitHub Actions の Secret から受け取る
 
-url = "https://api.line.me/v2/bot/message/broadcast"
-headers = {
-    "Authorization": f"Bearer {LINE_CHANNEL_TOKEN}",
-    "Content-Type": "application/json"
-}
-body = {
-    "messages": [
-        {"type": "text", "text": "テスト配信（Broadcast）"}  # 本文に日本語はOK（JSONはUTF-8）
-    ]
-}
+def send_broadcast(text: str):
+    url = "https://api.line.me/v2/bot/message/broadcast"
+    headers = {"Authorization": f"Bearer {TOKEN}", "Content-Type": "application/json"}
+    body = {"messages": [{"type": "text", "text": text}]}
+    r = requests.post(url, headers=headers, json=body, timeout=10)
+    r.raise_for_status()
+    return r.status_code, r.text
 
-r = requests.post(url, headers=headers, json=body, timeout=10)
-print(r.status_code, r.text)
+if __name__ == "__main__":
+    today = datetime.datetime.now().strftime("%Y/%m/%d")
+    msg = f"📒 本日のダイジェスト {today}\n自動送信テスト（06:28実行予定）"
+    code, body = send_broadcast(msg)
+    print(code, body)
