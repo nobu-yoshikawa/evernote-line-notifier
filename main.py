@@ -1,19 +1,13 @@
-import os
 import requests
-import datetime
+import os
 
-TOKEN = os.environ["LINE_CHANNEL_TOKEN"]  # ← GitHub Actions の Secret から受け取る
+token = os.environ["LINE_CHANNEL_TOKEN"]
+url = "https://notify-api.line.me/api/notify"
 
-def send_broadcast(text: str):
-    url = "https://api.line.me/v2/bot/message/broadcast"
-    headers = {"Authorization": f"Bearer {TOKEN}", "Content-Type": "application/json"}
-    body = {"messages": [{"type": "text", "text": text}]}
-    r = requests.post(url, headers=headers, json=body, timeout=10)
-    r.raise_for_status()
-    return r.status_code, r.text
+message = "GitHub ActionsからのLINE通知テストです！🎉"
 
-if __name__ == "__main__":
-    today = datetime.datetime.now().strftime("%Y/%m/%d")
-    msg = f"📒 本日のダイジェスト {today}\n自動送信テスト（06:28実行予定）"
-    code, body = send_broadcast(msg)
-    print(code, body)
+headers = {"Authorization": f"Bearer {token}"}
+data = {"message": message}
+
+response = requests.post(url, headers=headers, data=data)
+print(response.status_code, response.text)
