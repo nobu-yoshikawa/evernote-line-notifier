@@ -1,26 +1,19 @@
 name: Evernote Digest to LINE
 
 on:
+  workflow_dispatch:        # ← 手動実行ボタン
   schedule:
-    - cron: "28 21 * * *"  # JSTで朝6:28に実行（UTCだと21:28）
-  workflow_dispatch:      # 手動実行も可能
+    - cron: '28 21 * * *'   # ← JST 06:28（UTC-9時間）
 
 jobs:
-  send_line:
+  send:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout repo
-        uses: actions/checkout@v4
-
-      - name: Set up Python
-        uses: actions/setup-python@v5
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
         with:
-          python-version: "3.x"
-
-      - name: Install dependencies
-        run: pip install requests
-
-      - name: Run LINE Notify script
-        env:
+          python-version: '3.10'   # バージョン固定
+      - run: pip install requests
+      - env:
           LINE_CHANNEL_TOKEN: ${{ secrets.LINE_CHANNEL_TOKEN }}
         run: python main.py
