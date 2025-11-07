@@ -2,8 +2,8 @@ name: Evernote Digest to LINE
 
 on:
   workflow_dispatch:        # 手動実行ボタンを表示
-  schedule:
-    - cron: '28 21 * * *'   # 毎日JST 06:28（UTCはJST-9）
+schedule:
+  - cron: '10 0 * * *'   # UTC 0:10 = JST 9:10
 
 jobs:
   send:
